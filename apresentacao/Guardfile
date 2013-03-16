@@ -1,0 +1,3 @@
+guard :shell do
+  watch('gurupi-vagrant.tex') { `pdflatex gurupi-vagrant.tex` }
+end
