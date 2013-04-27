@@ -14,7 +14,7 @@
 \author{Jonhnny Weslley \\ @jweslley}
 \title{Virtualizando o ambiente de desenvolvimento com Vagrant}
 \institute{Gurupi \\ Grupo de Usuários de Ruby do Piauí}
-\date{16/Março/2013}
+\date{27/Abril/2013}
 
 \begin{document}
 
@@ -130,13 +130,21 @@
     \item Mitchell Hashimoto \& John Bender
     \item http://vagrantup.com
     \item Utiliza Virtualbox e Ruby
-    \item Funciona em Mac OS, Linux, Windows
+    \item Funciona em Linux, Mac OS, Windows
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Vagrant}
+\begin{frame}[fragile]{Vagrant - Instalação}
+  \begin{itemize}
+    \item Downloads -- http://downloads.vagrantup.com
+  \end{itemize}
+  \begin{center}
+    \includegraphics[width=5cm]{images/downloads.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Vagrant - Utilização}
   \begin{verbatim}
-$ gem install vagrant
 $ vagrant box add precise64 http://files.vagrantup.com/precise64.box
 $ vagrant init precise64
 $ vagrant up
@@ -196,16 +204,18 @@ $ vagrant ssh
     \item Porém é possivel compartilhar outros diretórios:
   \end{itemize}
   \begin{verbatim}
-    config.vm.share_folder 'nome', 'path/guest', 'path/host'
+    config.vm.synced_folder 'path/host', 'path/guest'
   \end{verbatim}
 \end{frame}
 
 \begin{frame}[fragile]{Port fowarding}
   \begin{verbatim}
-    # config.vm.forward_port "nome", guestport, hostport
-    config.vm.forward_port "http", 80, 9000
-    config.vm.forward_port "redis", 6379, 6379
-    config.vm.forward_port "mysql", 3306, 3306
+# http
+config.vm.network :forwarded_port, guest: 80, host: 8080
+# redis
+config.vm.network :forwarded_port, guest: 6379, host: 6379
+# mysql
+config.vm.network :forwarded_port, guest: 3306, host: 3306
   \end{verbatim}
 \end{frame}
 
@@ -213,12 +223,14 @@ $ vagrant ssh
   \begin{verbatim}
     config.vm.define :web do |web_config|
       web_config.vm.box = "ubuntu"
-      web_config.vm.forward_port "http", 80, 8080
+      web_config.vm.network :forwarded_port,
+        guest: 80, host: 8080
       ...
     end
     config.vm.define :db do |db_config|
       db_config.vm.box = "centos-mysql"
-      db_config.vm.forward_port "mysql", 3306, 3306
+      db_config.vm.network :forwarded_port,
+        guest: 3306, host: 3306
       ...
     end
   \end{verbatim}
